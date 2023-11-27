@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Proyek Sains Data - 3&nbsp; Analisis dan Prediksi pada dataset Heart failure clinical records Menggunakan Pycaret.</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./Prediksi_Audio_Emosi.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./prediksi_pycaret.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Analisis dan Prediksi pada dataset Heart failure clinical records Menggunakan Pycaret.</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Proyek Sains Data</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Proyek Sains Data</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Prediksi_Audio_Emosi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Analisis dan Prediksi pada Data Audio Emosi</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./prediksi_pycaret.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Analisis dan Prediksi pada dataset Heart failure clinical records Menggunakan Pycaret.</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#business-understanding" id="toc-business-understanding" class="nav-link active" data-scroll-target="#business-understanding"><span class="header-section-number">3.1</span> Business understanding</a>
+  <ul class="collapse">
+  <li><a href="#tujuan-analisis" id="toc-tujuan-analisis" class="nav-link" data-scroll-target="#tujuan-analisis"><span class="header-section-number">3.1.1</span> Tujuan Analisis:</a></li>
+  </ul></li>
+  <li><a href="#data-understanding-memahami-data" id="toc-data-understanding-memahami-data" class="nav-link" data-scroll-target="#data-understanding-memahami-data"><span class="header-section-number">3.2</span> Data understanding / Memahami Data</a>
+  <ul class="collapse">
+  <li><a href="#deskripsi-dataset" id="toc-deskripsi-dataset" class="nav-link" data-scroll-target="#deskripsi-dataset"><span class="header-section-number">3.2.1</span> Deskripsi Dataset</a></li>
+  <li><a href="#eksplorasi-dataset-satistik-dataset" id="toc-eksplorasi-dataset-satistik-dataset" class="nav-link" data-scroll-target="#eksplorasi-dataset-satistik-dataset"><span class="header-section-number">3.2.2</span> Eksplorasi Dataset / Satistik Dataset:</a></li>
+  </ul></li>
+  <li><a href="#data-prepocessing" id="toc-data-prepocessing" class="nav-link" data-scroll-target="#data-prepocessing"><span class="header-section-number">3.3</span> Data Prepocessing</a>
+  <ul class="collapse">
+  <li><a href="#oversampling" id="toc-oversampling" class="nav-link" data-scroll-target="#oversampling"><span class="header-section-number">3.3.1</span> Oversampling</a></li>
+  <li><a href="#normalisasi-menggunakan-zscore" id="toc-normalisasi-menggunakan-zscore" class="nav-link" data-scroll-target="#normalisasi-menggunakan-zscore"><span class="header-section-number">3.3.2</span> Normalisasi Menggunakan Zscore</a></li>
+  </ul></li>
+  <li><a href="#modelling" id="toc-modelling" class="nav-link" data-scroll-target="#modelling"><span class="header-section-number">3.4</span> Modelling</a>
+  <ul class="collapse">
+  <li><a href="#mencari-model-terbaik-menggunakan-pycaret" id="toc-mencari-model-terbaik-menggunakan-pycaret" class="nav-link" data-scroll-target="#mencari-model-terbaik-menggunakan-pycaret"><span class="header-section-number">3.4.1</span> Mencari Model Terbaik Menggunakan Pycaret</a></li>
+  </ul></li>
+  <li><a href="#evaluasi" id="toc-evaluasi" class="nav-link" data-scroll-target="#evaluasi"><span class="header-section-number">3.5</span> Evaluasi</a>
+  <ul class="collapse">
+  <li><a href="#menyimpan-model-terbaik-menggunakan-pycaret" id="toc-menyimpan-model-terbaik-menggunakan-pycaret" class="nav-link" data-scroll-target="#menyimpan-model-terbaik-menggunakan-pycaret"><span class="header-section-number">3.5.1</span> Menyimpan Model terbaik Menggunakan Pycaret</a></li>
+  <li><a href="#prediksi-death_event-menggunakan-random-forest-classifier-rf-dengan-data-baru" id="toc-prediksi-death_event-menggunakan-random-forest-classifier-rf-dengan-data-baru" class="nav-link" data-scroll-target="#prediksi-death_event-menggunakan-random-forest-classifier-rf-dengan-data-baru"><span class="header-section-number">3.5.2</span> Prediksi Death_Event Menggunakan Random Forest Classifier (rf) dengan Data Baru</a></li>
+  </ul></li>
+  <li><a href="#deployment" id="toc-deployment" class="nav-link" data-scroll-target="#deployment"><span class="header-section-number">3.6</span> Deployment</a>
+  <ul class="collapse">
+  <li><a href="#link-streamlitaplikasi-prediksi-pada-dataset-heart-failure-clinical-records" id="toc-link-streamlitaplikasi-prediksi-pada-dataset-heart-failure-clinical-records" class="nav-link" data-scroll-target="#link-streamlitaplikasi-prediksi-pada-dataset-heart-failure-clinical-records"><span class="header-section-number">3.6.1</span> Link Streamlit/Aplikasi Prediksi pada dataset Heart failure clinical records:</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Analisis dan Prediksi pada dataset Heart failure clinical records Menggunakan Pycaret.</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Nama: Whinta Virginia Putri</p>
+<p>NIM: 210411100047</p>
+<p>Proyek Sain Data</p>
+<section id="business-understanding" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="business-understanding"><span class="header-section-number">3.1</span> Business understanding</h2>
+<section id="tujuan-analisis" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="tujuan-analisis"><span class="header-section-number">3.1.1</span> Tujuan Analisis:</h3>
+<p>Analisis pada dataset Heart failure clinical records bertujuan untuk memprediksi kemungkinan terjadinya gagal jantung pada pasien berdasarkan 13 fitur-fitur klinis mereka.</p>
+</section>
+</section>
+<section id="data-understanding-memahami-data" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="data-understanding-memahami-data"><span class="header-section-number">3.2</span> Data understanding / Memahami Data</h2>
+<section id="deskripsi-dataset" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="deskripsi-dataset"><span class="header-section-number">3.2.1</span> Deskripsi Dataset</h3>
+<p>Dataset “Heart failure clinical records” merupakan kumpulan data yang berisi catatan medis dari 299 pasien yang mengalami gagal jantung. Data ini dikumpulkan selama periode pemantauan pasien-pasien tersebut. Setiap profil pasien dalam dataset ini dilengkapi dengan 13 fitur klinis yang mencerminkan kondisi kesehatan mereka. Di bawah ini, saya akan menjelaskan deskripsi dari dataset ini serta tujuan utamanya:</p>
+<section id="deskripsi-dataset-dan-tujuan-dataset" class="level4" data-number="3.2.1.1">
+<h4 data-number="3.2.1.1" class="anchored" data-anchor-id="deskripsi-dataset-dan-tujuan-dataset"><span class="header-section-number">3.2.1.1</span> Deskripsi Dataset Dan Tujuan Dataset:</h4>
+<ol type="1">
+<li><p>Jumlah Sampel: Dataset ini berisi informasi dari 299 pasien yang mengalami gagal jantung dan tidak ada missing values.</p></li>
+<li><p>Fitur Klinis: Setiap pasien dalam dataset ini memiliki 13 fitur klinis yang mencakup berbagai aspek dari kesehatan mereka. Beberapa contoh fitur klinis yang mungkin termasuk dalam dataset ini adalah Usia, tekanan darah, kadar serum kreatinin, kadar serum natrium, kadar serum kalium, ejection fraction (fraksi ejeksi), jenis kelamin pasien, dan lain sebagainya. dibawah ini adalah fitur pada dataset: ‘age’, ‘anaemia’, ‘creatinine_phosphokinase’, ‘diabetes’, ‘ejection_fraction’, ‘high_blood_pressure’, ‘platelets’, ‘serum_creatinine’, ‘serum_sodium’, ‘sex’, ‘smoking’, ‘time’, ‘DEATH_EVENT’</p></li>
+<li><p>Dataset ini memiliki target pada kolom Death Event. Fitur target “death event” adalah sebuah fitur yang digunakan untuk menunjukkan apakah pasien mengalami kematian selama periode pemantauan atau tidak. Fitur ini bersifat boolean, yang berarti nilainya hanya dapat berupa dua kemungkinan: 1 / True (benar) atau 0 / False (salah). Jumlah Target dengan nilai 1 Berjumlah 96 dan nilai 0 berjumlah 203. jumlah antara setiap target tidak seimbang maka pada processing akan dilakukan oversampling untuk menyeimbangkan setiap target.</p></li>
+<li><p>Tujuan Dataset: Dataset ini memiliki beberapa tujuan utama, antara lain:</p>
+<ol type="a">
+<li><p>Analisis dan Penelitian Kesehatan: Data ini dapat digunakan untuk menganalisis faktor-faktor risiko dan prediksi gagal jantung, serta untuk memahami hubungan antara berbagai fitur klinis dan kondisi pasien.</p></li>
+<li><p>Pengembangan Model Prediktif: Dataset ini dapat digunakan untuk mengembangkan model prediktif yang dapat memprediksi kemungkinan terjadinya gagal jantung pada pasien berdasarkan fitur-fitur klinis mereka. Hal ini dapat membantu tenaga medis dalam melakukan tindakan pencegahan yang lebih tepat waktu.</p></li>
+</ol></li>
+</ol>
+<p>Tujuan utama dari dataset ini adalah meningkatkan pemahaman tentang gagal jantung, membantu dalam pengembangan metode prediktif, serta mendukung penelitian dan pengembangan terkait kesehatan jantung. Data ini menjadi dasar penting untuk menjalankan berbagai analisis dan penelitian dalam upaya untuk meningkatkan diagnosis, perawatan, dan pencegahan penyakit gagal jantung.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import Library</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pycaret.classification <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> imblearn.over_sampling <span class="im">import</span> RandomOverSampler</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pycaret.classification <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pickle</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-outputid="d3934e41-fc85-4208-eada-bbc76f85ab83">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Baca data dari file CSV yang sudah di upload di github</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/whintaaa/datapsd/main/heart_failure_clinical_records_dataset.csv"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(url)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># menampilkan dataset</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+
+  <div id="df-335c21d7-4ccf-4602-bfed-345dd5d0b20b" class="colab-df-container">
+    <div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">age</th>
+<th data-quarto-table-cell-role="th">anaemia</th>
+<th data-quarto-table-cell-role="th">creatinine_phosphokinase</th>
+<th data-quarto-table-cell-role="th">diabetes</th>
+<th data-quarto-table-cell-role="th">ejection_fraction</th>
+<th data-quarto-table-cell-role="th">high_blood_pressure</th>
+<th data-quarto-table-cell-role="th">platelets</th>
+<th data-quarto-table-cell-role="th">serum_creatinine</th>
+<th data-quarto-table-cell-role="th">serum_sodium</th>
+<th data-quarto-table-cell-role="th">sex</th>
+<th data-quarto-table-cell-role="th">smoking</th>
+<th data-quarto-table-cell-role="th">time</th>
+<th data-quarto-table-cell-role="th">DEATH_EVENT</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>75.0</td>
+<td>0</td>
+<td>582</td>
+<td>0</td>
+<td>20</td>
+<td>1</td>
+<td>265000.00</td>
+<td>1.9</td>
+<td>130</td>
+<td>1</td>
+<td>0</td>
+<td>4</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>55.0</td>
+<td>0</td>
+<td>7861</td>
+<td>0</td>
+<td>38</td>
+<td>0</td>
+<td>263358.03</td>
+<td>1.1</td>
+<td>136</td>
+<td>1</td>
+<td>0</td>
+<td>6</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>65.0</td>
+<td>0</td>
+<td>146</td>
+<td>0</td>
+<td>20</td>
+<td>0</td>
+<td>162000.00</td>
+<td>1.3</td>
+<td>129</td>
+<td>1</td>
+<td>1</td>
+<td>7</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>50.0</td>
+<td>1</td>
+<td>111</td>
+<td>0</td>
+<td>20</td>
+<td>0</td>
+<td>210000.00</td>
+<td>1.9</td>
+<td>137</td>
+<td>1</td>
+<td>0</td>
+<td>7</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>65.0</td>
+<td>1</td>
+<td>160</td>
+<td>1</td>
+<td>20</td>
+<td>0</td>
+<td>327000.00</td>
+<td>2.7</td>
+<td>116</td>
+<td>0</td>
+<td>0</td>
+<td>8</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">294</td>
+<td>62.0</td>
+<td>0</td>
+<td>61</td>
+<td>1</td>
+<td>38</td>
+<td>1</td>
+<td>155000.00</td>
+<td>1.1</td>
+<td>143</td>
+<td>1</td>
+<td>1</td>
+<td>270</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">295</td>
+<td>55.0</td>
+<td>0</td>
+<td>1820</td>
+<td>0</td>
+<td>38</td>
+<td>0</td>
+<td>270000.00</td>
+<td>1.2</td>
+<td>139</td>
+<td>0</td>
+<td>0</td>
+<td>271</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">296</td>
+<td>45.0</td>
+<td>0</td>
+<td>2060</td>
+<td>1</td>
+<td>60</td>
+<td>0</td>
+<td>742000.00</td>
+<td>0.8</td>
+<td>138</td>
+<td>0</td>
+<td>0</td>
+<td>278</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">297</td>
+<td>45.0</td>
+<td>0</td>
+<td>2413</td>
+<td>0</td>
+<td>38</td>
+<td>0</td>
+<td>140000.00</td>
+<td>1.4</td>
+<td>140</td>
+<td>1</td>
+<td>1</td>
+<td>280</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">298</td>
+<td>50.0</td>
+<td>0</td>
+<td>196</td>
+<td>0</td>
+<td>45</td>
+<td>0</td>
+<td>395000.00</td>
+<td>1.6</td>
+<td>136</td>
+<td>1</td>
+<td>1</td>
+<td>285</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>299 rows × 13 columns</p>
+</div>
+    <div class="colab-df-buttons">
+
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-335c21d7-4ccf-4602-bfed-345dd5d0b20b')" title="Convert this dataframe to an interactive table." style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"></path>
+  </svg>
+    </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+    <script>
+      const buttonEl =
+        document.querySelector('#df-335c21d7-4ccf-4602-bfed-345dd5d0b20b button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-335c21d7-4ccf-4602-bfed-345dd5d0b20b');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+  </div>
+
+
+<div id="df-89f8dc0b-c5e3-4a39-a136-9244f161604c">
+  <button class="colab-df-quickchart" onclick="quickchart('df-89f8dc0b-c5e3-4a39-a136-9244f161604c')" title="Suggest charts" style="display:none;">
+
+<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px">
+    <g>
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"></path>
+    </g>
+</svg>
+  </button>
+
+<style>
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+</style>
+
+  <script>
+    async function quickchart(key) {
+      const quickchartButtonEl =
+        document.querySelector('#' + key + ' button');
+      quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+      quickchartButtonEl.classList.add('colab-df-spinner');
+      try {
+        const charts = await google.colab.kernel.invokeFunction(
+            'suggestCharts', [key], {});
+      } catch (error) {
+        console.error('Error during call to suggestCharts:', error);
+      }
+      quickchartButtonEl.classList.remove('colab-df-spinner');
+      quickchartButtonEl.classList.add('colab-df-quickchart-complete');
+    }
+    (() => {
+      let quickchartButtonEl =
+        document.querySelector('#df-89f8dc0b-c5e3-4a39-a136-9244f161604c button');
+      quickchartButtonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+    })();
+  </script>
+</div>
+    </div>
+  </div>
+</div>
+</div>
+</section>
+<section id="penjelasan-fitur-fitur" class="level4" data-number="3.2.1.2">
+<h4 data-number="3.2.1.2" class="anchored" data-anchor-id="penjelasan-fitur-fitur"><span class="header-section-number">3.2.1.2</span> Penjelasan Fitur-fitur:</h4>
+<div class="cell" data-outputid="61d20c76-f815-42a1-d513-67ec840fe112">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the column names to identify the correct target variable</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.columns)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Index(['age', 'anaemia', 'creatinine_phosphokinase', 'diabetes',
+       'ejection_fraction', 'high_blood_pressure', 'platelets',
+       'serum_creatinine', 'serum_sodium', 'sex', 'smoking', 'time',
+       'DEATH_EVENT'],
+      dtype='object')</code></pre>
+</div>
+</div>
+<p>Fitur-fitur klinis dalam dataset “Heart Failure Clinical Records” adalah sebagai berikut:</p>
+<ol type="1">
+<li><p><strong>Usia (age)</strong>: Ini adalah usia pasien dalam tahun. Fitur ini memberikan informasi tentang berapa usia pasien yang mengalami gagal jantung. Usia seringkali menjadi faktor penting dalam menilai risiko dan prognosis penyakit jantung. Fitur ini bertipe data numerik.</p></li>
+<li><p><strong>Anemia (anaemia)</strong>: Ini adalah fitur boolean yang menunjukkan apakah pasien mengalami penurunan jumlah sel darah merah atau kadar hemoglobin. Nilai 1 / “true” menunjukkan kehadiran anemia, sementara 0 / “false” menunjukkan ketiadaan anemia.</p></li>
+<li><p><strong>Kreatinin Fosfokinase (CPK)</strong>: Ini adalah tingkat enzim CPK dalam darah, diukur dalam mikrogram per liter (mcg/L). Tingkat CPK dalam darah dapat memberikan indikasi adanya kerusakan otot atau jaringan jantung. Ini adalah indikator penting dalam penilaian kondisi jantung. Fitur ini bertipe data numerik.</p></li>
+<li><p><strong>Diabetes</strong>: Ini adalah fitur boolean yang menunjukkan apakah pasien menderita diabetes atau tidak. Nilai 1 / “true” menunjukkan keberadaan diabetes, sementara 0 / “false” menunjukkan ketiadaan diabetes. Diabetes merupakan faktor risiko yang signifikan dalam perkembangan penyakit jantung.</p></li>
+<li><p><strong>Fraksi Ejeksi (Ejection Fraction)</strong>: Ini adalah persentase darah yang meninggalkan jantung pada setiap kontraksi. Fraksi ejeksi ini dinyatakan dalam persentase. Ini adalah ukuran penting dalam menilai kemampuan jantung untuk memompa darah dan dapat memberikan informasi tentang fungsi jantung. Fitur ini bertipe data numerik.</p></li>
+<li><p><strong>Tekanan Darah Tinggi (High Blood Pressure)</strong>: Ini adalah fitur boolean yang menunjukkan apakah pasien memiliki hipertensi atau tidak. Nilai 1 / “true” menunjukkan keberadaan tekanan darah tinggi, sementara 2 / “false” menunjukkan ketiadaan tekanan darah tinggi. Tekanan darah tinggi adalah faktor risiko utama untuk penyakit jantung.</p></li>
+<li><p><strong>Platelet (platelets)</strong>: Ini adalah jumlah platelet dalam darah, diukur dalam ribu platelet per mililiter (kiloplatelets/mL). Platelet adalah sel darah yang berperan dalam pembekuan darah. Nilai platelet dalam darah dapat memberikan informasi tentang kemampuan darah untuk membeku. Fitur ini bertipe data numerik.</p></li>
+<li><p><strong>Jenis Kelamin (Sex)</strong>: Ini adalah fitur biner yang menunjukkan jenis kelamin pasien, yaitu perempuan (woman) atau laki-laki (man). Informasi ini dapat digunakan untuk mengevaluasi perbedaan jenis kelamin dalam insiden gagal jantung.</p></li>
+<li><p><strong>Kreatinin Serum (Serum Creatinine)</strong>: Ini adalah tingkat kreatinin serum dalam darah, diukur dalam miligram per desiliter (mg/dL). Kreatinin adalah produk sisa metabolisme yang dapat memberikan informasi tentang fungsi ginjal. Tingkat kreatinin serum yang tinggi dapat menunjukkan masalah ginjal yang dapat mempengaruhi kondisi jantung. Fitur ini bertipe data numerik.</p></li>
+<li><p><strong>Natrium Serum (Serum Sodium)</strong>: Ini adalah tingkat natrium serum dalam darah, diukur dalam miliequivalents per liter (mEq/L). Natrium adalah elektrolit penting dalam tubuh dan tingkat natrium serum dapat memberikan informasi tentang keseimbangan elektrolit yang dapat mempengaruhi fungsi jantung. Fitur ini bertipe data numerik.</p></li>
+<li><p><strong>Merokok (Smoking)</strong>: Ini adalah fitur biner yang menunjukkan apakah pasien merokok atau tidak. Nilai 1 / “true” menunjukkan kebiasaan merokok, sementara 0 / “false” menunjukkan ketiadaan kebiasaan merokok. Merokok adalah faktor risiko yang signifikan dalam perkembangan penyakit jantung.</p></li>
+<li><p><strong>Waktu (Time)</strong>: Ini adalah periode pemantauan atau follow-up pasien dalam satuan hari (days). Fitur ini mengukur lamanya pasien dipantau dalam penelitian. Ini adalah informasi penting dalam analisis klinis dan penelitian lanjutan. Fitur ini bertipe data numerik.</p></li>
+<li><p><strong>Kejadian Kematian (Death Event)</strong>: Fitur target “death event” adalah sebuah fitur yang digunakan untuk menunjukkan apakah pasien mengalami kematian selama periode pemantauan atau tidak. Fitur ini bersifat boolean, yang berarti nilainya hanya dapat berupa dua kemungkinan: 1 / True (benar) atau 0 / False (salah). Jika “death event” memiliki nilai True, ini berarti bahwa pasien tersebut mengalami kematian selama periode pemantauan yang dicatat dalam dataset. Sebaliknya, jika “death event” memiliki nilai False, maka ini menunjukkan bahwa pasien tersebut masih hidup atau tidak mengalami kematian selama periode tersebut.</p></li>
+</ol>
+</section>
+</section>
+<section id="eksplorasi-dataset-satistik-dataset" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="eksplorasi-dataset-satistik-dataset"><span class="header-section-number">3.2.2</span> Eksplorasi Dataset / Satistik Dataset:</h3>
+<div class="cell" data-outputid="dbe4fdf1-4789-45dd-ac25-7e98e1e0ebfc">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Baca data dari URL CSV</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/whintaaa/datapsd/main/heart_failure_clinical_records_dataset.csv"</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(url)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Informasi Umum tentang Dataset</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>info <span class="op">=</span> data.info()</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Statistik Deskriptif untuk Kolom-Kolom Numerik</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>describe <span class="op">=</span> data.describe()</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Jumlah Nilai yang Hilang untuk Setiap Kolom</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>missing_values <span class="op">=</span> data.isnull().<span class="bu">sum</span>()</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Beberapa Baris Pertama dari Dataset</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>head <span class="op">=</span> data.head()</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Jumlah Unik untuk Kolom Target (DEATH_EVENT)</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>target_counts <span class="op">=</span> data[<span class="st">'DEATH_EVENT'</span>].value_counts()</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Korelasi Antar Kolom Numerik</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>correlation_matrix <span class="op">=</span> data.corr()</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Distribusi Umur (Age)</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>age_distribution <span class="op">=</span> data[<span class="st">'age'</span>].value_counts()</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualisasi Data</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>))</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Countplot untuk Kolom Target (DEATH_EVENT)</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>))</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>sns.countplot(x<span class="op">=</span><span class="st">'DEATH_EVENT'</span>, data<span class="op">=</span>data)</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Countplot untuk Kolom Target (DEATH_EVENT)'</span>)</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'DEATH_EVENT'</span>)</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Jumlah'</span>)</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafik distribusi umur (Age)</span></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>sns.histplot(data[<span class="st">'age'</span>], bins<span class="op">=</span><span class="dv">30</span>, kde<span class="op">=</span><span class="va">True</span>, color<span class="op">=</span><span class="st">'skyblue'</span>)</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Distribusi Umur'</span>)</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Umur'</span>)</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Frekuensi'</span>)</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafik korelasi antara umur (Age) dan kadar serum kreatinin (Serum Creatinine)</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(x<span class="op">=</span><span class="st">'age'</span>, y<span class="op">=</span><span class="st">'serum_creatinine'</span>, data<span class="op">=</span>data, hue<span class="op">=</span><span class="st">'sex'</span>, palette<span class="op">=</span><span class="st">'viridis'</span>)</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Korelasi Umur dan Kadar Serum Kreatinin'</span>)</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Umur'</span>)</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Kadar Serum Kreatinin'</span>)</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>plt.legend(title<span class="op">=</span><span class="st">'Jenis Kelamin'</span>, loc<span class="op">=</span><span class="st">'upper right'</span>, labels<span class="op">=</span>[<span class="st">'Female'</span>, <span class="st">'Male'</span>])</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Contoh menampilkan hasil</span></span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Informasi Umum tentang Dataset:"</span>)</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(info)</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Jumlah Nilai yang Hilang:"</span>)</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(missing_values)</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Jumlah data untuk Kolom Target (DEATH_EVENT):"</span>)</span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(target_counts)</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a><span class="co"># Statistik deskriptif</span></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>statistics <span class="op">=</span> data.describe()</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a><span class="co"># Menampilkan hasil</span></span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Statistik Deskriptif:"</span>)</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(statistics)</span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 299 entries, 0 to 298
+Data columns (total 13 columns):
+ #   Column                    Non-Null Count  Dtype  
+---  ------                    --------------  -----  
+ 0   age                       299 non-null    float64
+ 1   anaemia                   299 non-null    int64  
+ 2   creatinine_phosphokinase  299 non-null    int64  
+ 3   diabetes                  299 non-null    int64  
+ 4   ejection_fraction         299 non-null    int64  
+ 5   high_blood_pressure       299 non-null    int64  
+ 6   platelets                 299 non-null    float64
+ 7   serum_creatinine          299 non-null    float64
+ 8   serum_sodium              299 non-null    int64  
+ 9   sex                       299 non-null    int64  
+ 10  smoking                   299 non-null    int64  
+ 11  time                      299 non-null    int64  
+ 12  DEATH_EVENT               299 non-null    int64  
+dtypes: float64(3), int64(10)
+memory usage: 30.5 KB</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;Figure size 1500x1000 with 0 Axes&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="prediksi_pycaret_files/figure-html/cell-5-output-3.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="prediksi_pycaret_files/figure-html/cell-5-output-4.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="prediksi_pycaret_files/figure-html/cell-5-output-5.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Informasi Umum tentang Dataset:
+None
+
+Jumlah Nilai yang Hilang:
+age                         0
+anaemia                     0
+creatinine_phosphokinase    0
+diabetes                    0
+ejection_fraction           0
+high_blood_pressure         0
+platelets                   0
+serum_creatinine            0
+serum_sodium                0
+sex                         0
+smoking                     0
+time                        0
+DEATH_EVENT                 0
+dtype: int64
+
+Jumlah data untuk Kolom Target (DEATH_EVENT):
+0    203
+1     96
+Name: DEATH_EVENT, dtype: int64
+
+Statistik Deskriptif:
+              age     anaemia  creatinine_phosphokinase    diabetes  \
+count  299.000000  299.000000                299.000000  299.000000   
+mean    60.833893    0.431438                581.839465    0.418060   
+std     11.894809    0.496107                970.287881    0.494067   
+min     40.000000    0.000000                 23.000000    0.000000   
+25%     51.000000    0.000000                116.500000    0.000000   
+50%     60.000000    0.000000                250.000000    0.000000   
+75%     70.000000    1.000000                582.000000    1.000000   
+max     95.000000    1.000000               7861.000000    1.000000   
+
+       ejection_fraction  high_blood_pressure      platelets  \
+count         299.000000           299.000000     299.000000   
+mean           38.083612             0.351171  263358.029264   
+std            11.834841             0.478136   97804.236869   
+min            14.000000             0.000000   25100.000000   
+25%            30.000000             0.000000  212500.000000   
+50%            38.000000             0.000000  262000.000000   
+75%            45.000000             1.000000  303500.000000   
+max            80.000000             1.000000  850000.000000   
+
+       serum_creatinine  serum_sodium         sex    smoking        time  \
+count         299.00000    299.000000  299.000000  299.00000  299.000000   
+mean            1.39388    136.625418    0.648829    0.32107  130.260870   
+std             1.03451      4.412477    0.478136    0.46767   77.614208   
+min             0.50000    113.000000    0.000000    0.00000    4.000000   
+25%             0.90000    134.000000    0.000000    0.00000   73.000000   
+50%             1.10000    137.000000    1.000000    0.00000  115.000000   
+75%             1.40000    140.000000    1.000000    1.00000  203.000000   
+max             9.40000    148.000000    1.000000    1.00000  285.000000   
+
+       DEATH_EVENT  
+count    299.00000  
+mean       0.32107  
+std        0.46767  
+min        0.00000  
+25%        0.00000  
+50%        0.00000  
+75%        1.00000  
+max        1.00000  </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="data-prepocessing" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="data-prepocessing"><span class="header-section-number">3.3</span> Data Prepocessing</h2>
+<section id="oversampling" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="oversampling"><span class="header-section-number">3.3.1</span> Oversampling</h3>
+<p>Melihat jumlah masing-masing target pada kolom ‘death event’:</p>
+<div class="cell" data-outputid="897c4de0-9267-4fc2-c7a1-6e425541d4aa">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Menghitung jumlah masing-masing target pada kolom 'death event'</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>jumlah_death_event_1 <span class="op">=</span> df[df[<span class="st">'DEATH_EVENT'</span>] <span class="op">==</span> <span class="dv">1</span>].shape[<span class="dv">0</span>]</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>jumlah_death_event_0 <span class="op">=</span> df[df[<span class="st">'DEATH_EVENT'</span>] <span class="op">==</span> <span class="dv">0</span>].shape[<span class="dv">0</span>]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Menampilkan jumlah masing-masing target</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Jumlah Target 'death event' dengan Nilai 1:"</span>, jumlah_death_event_1)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Jumlah Target 'death event' dengan Nilai 0:"</span>, jumlah_death_event_0)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Jumlah Target 'death event' dengan Nilai 1: 96
+Jumlah Target 'death event' dengan Nilai 0: 203</code></pre>
+</div>
+</div>
+<p>Bisa dilihat jumlah target dengan nilai 1 = 96 dan nilai 0 = 203 ini menandakan bahwa jumlah target pada dataset tidak seimbang. Maka salah satu metode untuk menyeimbangkan target bisa menggunakan teknik oversampling. Teknik oversampling adalah salah satu pendekatan untuk menyeimbangkan dataset yang tidak seimbang dengan meningkatkan jumlah sampel dalam kategori minoritas. Kategori minoritas adalah kelas target yang memiliki frekuensi yang lebih rendah dibandingkan dengan kelas mayoritas. Teknik oversampling dilakukan dengan cara menambahkan lebih banyak contoh dari kategori minoritas agar jumlahnya sebanding dengan kategori mayoritas.</p>
+<p>Ada beberapa metode oversampling yang umum digunakan, dan salah satunya adalah RandomOverSampler. Dalam RandomOverSampler, sampel acak dari kategori minoritas ditambahkan kembali ke dataset hingga jumlahnya setara dengan jumlah sampel dalam kategori mayoritas.</p>
+<p>Berikut adalah langkah-langkah umum untuk menggunakan teknik oversampling:</p>
+<ol type="1">
+<li>Identifikasi dataset yang tidak seimbang.</li>
+<li>Pisahkan fitur (X) dan target (y).</li>
+<li>Terapkan teknik oversampling pada kategori minoritas.</li>
+<li>Gabungkan kembali data yang sudah diresampling.</li>
+<li>Lanjutkan dengan analisis atau pemodelan seperti biasa.</li>
+</ol>
+<p>Dengan menggunakan teknik oversampling, kita meningkatkan jumlah sampel di kategori minoritas (DEATH_EVENT = 1) sehingga seimbang dengan kategori mayoritas (DEATH_EVENT = 0).</p>
+<div class="cell" data-outputid="78ed21ca-5890-4f50-8758-244b94fb7c5f">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the column names to identify the correct target variable</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.columns)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Pilih kolom-kolom yang perlu dinormalisasi / bertype numerik</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>numerical_columns <span class="op">=</span> [<span class="st">'age'</span>, <span class="st">'creatinine_phosphokinase'</span>, <span class="st">'ejection_fraction'</span>, <span class="st">'platelets'</span>, <span class="st">'serum_creatinine'</span>, <span class="st">'serum_sodium'</span>]</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Langkah 3: Split data menjadi fitur (X) dan target (y)</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.drop(columns<span class="op">=</span>[<span class="st">'DEATH_EVENT'</span>])</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[<span class="st">'DEATH_EVENT'</span>]</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Menggunakan teknik oversampling dengan RandomOverSampler</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>oversampler <span class="op">=</span> RandomOverSampler(random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>X_resampled, y_resampled <span class="op">=</span> oversampler.fit_resample(X, y)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Membuat dataframe baru setelah oversampling</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>df_resampled <span class="op">=</span> pd.concat([X_resampled, y_resampled], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Menampilkan jumlah target setelah oversampling</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Jumlah Target setelah Oversampling:"</span>)</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_resampled[<span class="st">'DEATH_EVENT'</span>].value_counts())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Index(['age', 'anaemia', 'creatinine_phosphokinase', 'diabetes',
+       'ejection_fraction', 'high_blood_pressure', 'platelets',
+       'serum_creatinine', 'serum_sodium', 'sex', 'smoking', 'time',
+       'DEATH_EVENT'],
+      dtype='object')
+Jumlah Target setelah Oversampling:
+1    203
+0    203
+Name: DEATH_EVENT, dtype: int64</code></pre>
+</div>
+</div>
+</section>
+<section id="normalisasi-menggunakan-zscore" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="normalisasi-menggunakan-zscore"><span class="header-section-number">3.3.2</span> Normalisasi Menggunakan Zscore</h3>
+<p>Normalisasi Z-score adalah teknik normalisasi yang digunakan untuk mengubah setiap nilai dalam suatu variabel ke dalam skala yang memiliki rata-rata nol dan deviasi standar satu. Ini adalah cara umum untuk menormalkan data sehingga nilai-nilai yang berbeda dari variabel yang sama dapat dibandingkan secara langsung.</p>
+<p>Proses normalisasi Z-score melibatkan mengurangkan rata-rata dari setiap nilai dalam variabel dan membaginya dengan deviasi standar. Formula normalisasi Z-score untuk suatu nilai (x) dalam variabel (X) adalah sebagai berikut:</p>
+<p><span class="math inline">\([ z = \frac{{x - \text{{mean}}(X)}}{{\text{{std}}(X)}} ]\)</span></p>
+<p>di mana: - $( z $) adalah nilai hasil normalisasi (Z-score) dari <span class="math inline">\((x\)</span>). - $( (X) $) adalah rata-rata dari variabel <span class="math inline">\((X\)</span>). - $( (X) $) adalah deviasi standar dari variabel <span class="math inline">\((X\)</span>).</p>
+<p>Proses ini menghasilkan distribusi data yang memiliki rata-rata nol dan deviasi standar satu. Normalisasi Z-score sangat berguna dalam beberapa konteks, terutama ketika Anda ingin membandingkan nilai-nilai dari variabel yang memiliki skala yang berbeda.</p>
+<p>sebelum di mormalisasi terdapat fitur boolean pada dataset maka harus dipidahkan dengan fitur numerik karena hanya fitur numerik yang akan di normalisasi kemudian normalisasi Z-score diaktifkan dengan parameter <code>normalize=True</code> dan <code>normalize_method='zscore'</code>. PyCaret akan otomatis menormalisasi fitur-fitur numerik yang ditentukan menggunakan normalisasi Z-score. Lalu secara default pycaret akan membagi dataset menjadi 70% data train dan 30% data test, maka untuk dataset ini 209 menjadi data train dan 90 menjadi data test.</p>
+<div class="cell" data-outputid="6b84abbb-b268-43ad-c111-699701987b61">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the column names to identify the correct target variable</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.columns)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Pilih kolom-kolom yang perlu dinormalisasi / bertype numerik</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>numerical_columns <span class="op">=</span> [<span class="st">'age'</span>, <span class="st">'creatinine_phosphokinase'</span>, <span class="st">'ejection_fraction'</span>, <span class="st">'platelets'</span>, <span class="st">'serum_creatinine'</span>, <span class="st">'serum_sodium'</span>]</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Split data menjadi fitur (X) dan target (y)</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.drop(columns<span class="op">=</span>[<span class="st">'DEATH_EVENT'</span>])</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[<span class="st">'DEATH_EVENT'</span>]</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Inisialisasi ekperimen PyCaret</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>exp <span class="op">=</span> setup(data<span class="op">=</span>df, target<span class="op">=</span><span class="st">'DEATH_EVENT'</span>, normalize<span class="op">=</span><span class="va">True</span>, normalize_method<span class="op">=</span><span class="st">'zscore'</span>, numeric_features<span class="op">=</span>numerical_columns)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Index(['age', 'anaemia', 'creatinine_phosphokinase', 'diabetes',
+       'ejection_fraction', 'high_blood_pressure', 'platelets',
+       'serum_creatinine', 'serum_sodium', 'sex', 'smoking', 'time',
+       'DEATH_EVENT'],
+      dtype='object')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+
+
+<table id="T_ec96b" class="dataframe table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_ec96b_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Description</th>
+<th id="T_ec96b_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td id="T_ec96b_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</td>
+<td id="T_ec96b_row0_col0" class="data row0 col0">Session id</td>
+<td id="T_ec96b_row0_col1" class="data row0 col1">8772</td>
+</tr>
+<tr class="even">
+<td id="T_ec96b_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</td>
+<td id="T_ec96b_row1_col0" class="data row1 col0">Target</td>
+<td id="T_ec96b_row1_col1" class="data row1 col1">DEATH_EVENT</td>
+</tr>
+<tr class="odd">
+<td id="T_ec96b_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</td>
+<td id="T_ec96b_row2_col0" class="data row2 col0">Target type</td>
+<td id="T_ec96b_row2_col1" class="data row2 col1">Binary</td>
+</tr>
+<tr class="even">
+<td id="T_ec96b_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</td>
+<td id="T_ec96b_row3_col0" class="data row3 col0">Original data shape</td>
+<td id="T_ec96b_row3_col1" class="data row3 col1">(299, 13)</td>
+</tr>
+<tr class="odd">
+<td id="T_ec96b_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">4</td>
+<td id="T_ec96b_row4_col0" class="data row4 col0">Transformed data shape</td>
+<td id="T_ec96b_row4_col1" class="data row4 col1">(299, 13)</td>
+</tr>
+<tr class="even">
+<td id="T_ec96b_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">5</td>
+<td id="T_ec96b_row5_col0" class="data row5 col0">Transformed train set shape</td>
+<td id="T_ec96b_row5_col1" class="data row5 col1">(209, 13)</td>
+</tr>
+<tr class="odd">
+<td id="T_ec96b_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">6</td>
+<td id="T_ec96b_row6_col0" class="data row6 col0">Transformed test set shape</td>
+<td id="T_ec96b_row6_col1" class="data row6 col1">(90, 13)</td>
+</tr>
+<tr class="even">
+<td id="T_ec96b_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">7</td>
+<td id="T_ec96b_row7_col0" class="data row7 col0">Numeric features</td>
+<td id="T_ec96b_row7_col1" class="data row7 col1">6</td>
+</tr>
+<tr class="odd">
+<td id="T_ec96b_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">8</td>
+<td id="T_ec96b_row8_col0" class="data row8 col0">Preprocess</td>
+<td id="T_ec96b_row8_col1" class="data row8 col1">True</td>
+</tr>
+<tr class="even">
+<td id="T_ec96b_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">9</td>
+<td id="T_ec96b_row9_col0" class="data row9 col0">Imputation type</td>
+<td id="T_ec96b_row9_col1" class="data row9 col1">simple</td>
+</tr>
+<tr class="odd">
+<td id="T_ec96b_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">10</td>
+<td id="T_ec96b_row10_col0" class="data row10 col0">Numeric imputation</td>
+<td id="T_ec96b_row10_col1" class="data row10 col1">mean</td>
+</tr>
+<tr class="even">
+<td id="T_ec96b_level0_row11" class="row_heading level0 row11" data-quarto-table-cell-role="th">11</td>
+<td id="T_ec96b_row11_col0" class="data row11 col0">Categorical imputation</td>
+<td id="T_ec96b_row11_col1" class="data row11 col1">mode</td>
+</tr>
+<tr class="odd">
+<td id="T_ec96b_level0_row12" class="row_heading level0 row12" data-quarto-table-cell-role="th">12</td>
+<td id="T_ec96b_row12_col0" class="data row12 col0">Normalize</td>
+<td id="T_ec96b_row12_col1" class="data row12 col1">True</td>
+</tr>
+<tr class="even">
+<td id="T_ec96b_level0_row13" class="row_heading level0 row13" data-quarto-table-cell-role="th">13</td>
+<td id="T_ec96b_row13_col0" class="data row13 col0">Normalize method</td>
+<td id="T_ec96b_row13_col1" class="data row13 col1">zscore</td>
+</tr>
+<tr class="odd">
+<td id="T_ec96b_level0_row14" class="row_heading level0 row14" data-quarto-table-cell-role="th">14</td>
+<td id="T_ec96b_row14_col0" class="data row14 col0">Fold Generator</td>
+<td id="T_ec96b_row14_col1" class="data row14 col1">StratifiedKFold</td>
+</tr>
+<tr class="even">
+<td id="T_ec96b_level0_row15" class="row_heading level0 row15" data-quarto-table-cell-role="th">15</td>
+<td id="T_ec96b_row15_col0" class="data row15 col0">Fold Number</td>
+<td id="T_ec96b_row15_col1" class="data row15 col1">10</td>
+</tr>
+<tr class="odd">
+<td id="T_ec96b_level0_row16" class="row_heading level0 row16" data-quarto-table-cell-role="th">16</td>
+<td id="T_ec96b_row16_col0" class="data row16 col0">CPU Jobs</td>
+<td id="T_ec96b_row16_col1" class="data row16 col1">-1</td>
+</tr>
+<tr class="even">
+<td id="T_ec96b_level0_row17" class="row_heading level0 row17" data-quarto-table-cell-role="th">17</td>
+<td id="T_ec96b_row17_col0" class="data row17 col0">Use GPU</td>
+<td id="T_ec96b_row17_col1" class="data row17 col1">False</td>
+</tr>
+<tr class="odd">
+<td id="T_ec96b_level0_row18" class="row_heading level0 row18" data-quarto-table-cell-role="th">18</td>
+<td id="T_ec96b_row18_col0" class="data row18 col0">Log Experiment</td>
+<td id="T_ec96b_row18_col1" class="data row18 col1">False</td>
+</tr>
+<tr class="even">
+<td id="T_ec96b_level0_row19" class="row_heading level0 row19" data-quarto-table-cell-role="th">19</td>
+<td id="T_ec96b_row19_col0" class="data row19 col0">Experiment Name</td>
+<td id="T_ec96b_row19_col1" class="data row19 col1">clf-default-name</td>
+</tr>
+<tr class="odd">
+<td id="T_ec96b_level0_row20" class="row_heading level0 row20" data-quarto-table-cell-role="th">20</td>
+<td id="T_ec96b_row20_col0" class="data row20 col0">USI</td>
+<td id="T_ec96b_row20_col1" class="data row20 col1">1259</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="modelling" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="modelling"><span class="header-section-number">3.4</span> Modelling</h2>
+<section id="mencari-model-terbaik-menggunakan-pycaret" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="mencari-model-terbaik-menggunakan-pycaret"><span class="header-section-number">3.4.1</span> Mencari Model Terbaik Menggunakan Pycaret</h3>
+<p>Pycaret adalah library Python yang menyederhanakan proses pengembangan model machine learning. Dengan fitur otomatis seperti setup data, pemilihan model, optimasi hyperparameter, dan visualisasi hasil, Pycaret memungkinkan pengguna untuk fokus pada inti pemodelan tanpa menulis banyak kode. Berikut implementasi pycaret untuk mencari model terbaik untuk memprediksi resiko gagal jantung pada pasien:</p>
+<div class="cell" data-outputid="be0f8bdb-3d74-4f2f-f0bb-4488c19d6235">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bandingkan model dan cari yang terbaik</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>best_model <span class="op">=</span> compare_models()</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>best_model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+</div>
+<div class="cell-output cell-output-display">
+
+
+<table id="T_d165d" class="dataframe table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_d165d_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Model</th>
+<th id="T_d165d_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Accuracy</th>
+<th id="T_d165d_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">AUC</th>
+<th id="T_d165d_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">Recall</th>
+<th id="T_d165d_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">Prec.</th>
+<th id="T_d165d_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">F1</th>
+<th id="T_d165d_level0_col6" class="col_heading level0 col6" data-quarto-table-cell-role="th">Kappa</th>
+<th id="T_d165d_level0_col7" class="col_heading level0 col7" data-quarto-table-cell-role="th">MCC</th>
+<th id="T_d165d_level0_col8" class="col_heading level0 col8" data-quarto-table-cell-role="th">TT (Sec)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td id="T_d165d_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">rf</td>
+<td id="T_d165d_row0_col0" class="data row0 col0">Random Forest Classifier</td>
+<td id="T_d165d_row0_col1" class="data row0 col1">0.8274</td>
+<td id="T_d165d_row0_col2" class="data row0 col2">0.8750</td>
+<td id="T_d165d_row0_col3" class="data row0 col3">0.6500</td>
+<td id="T_d165d_row0_col4" class="data row0 col4">0.8216</td>
+<td id="T_d165d_row0_col5" class="data row0 col5">0.6962</td>
+<td id="T_d165d_row0_col6" class="data row0 col6">0.5805</td>
+<td id="T_d165d_row0_col7" class="data row0 col7">0.6064</td>
+<td id="T_d165d_row0_col8" class="data row0 col8">0.4490</td>
+</tr>
+<tr class="even">
+<td id="T_d165d_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">lr</td>
+<td id="T_d165d_row1_col0" class="data row1 col0">Logistic Regression</td>
+<td id="T_d165d_row1_col1" class="data row1 col1">0.8131</td>
+<td id="T_d165d_row1_col2" class="data row1 col2">0.8522</td>
+<td id="T_d165d_row1_col3" class="data row1 col3">0.6476</td>
+<td id="T_d165d_row1_col4" class="data row1 col4">0.7370</td>
+<td id="T_d165d_row1_col5" class="data row1 col5">0.6703</td>
+<td id="T_d165d_row1_col6" class="data row1 col6">0.5442</td>
+<td id="T_d165d_row1_col7" class="data row1 col7">0.5588</td>
+<td id="T_d165d_row1_col8" class="data row1 col8">0.1340</td>
+</tr>
+<tr class="odd">
+<td id="T_d165d_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">ridge</td>
+<td id="T_d165d_row2_col0" class="data row2 col0">Ridge Classifier</td>
+<td id="T_d165d_row2_col1" class="data row2 col1">0.8131</td>
+<td id="T_d165d_row2_col2" class="data row2 col2">0.0000</td>
+<td id="T_d165d_row2_col3" class="data row2 col3">0.6476</td>
+<td id="T_d165d_row2_col4" class="data row2 col4">0.7370</td>
+<td id="T_d165d_row2_col5" class="data row2 col5">0.6703</td>
+<td id="T_d165d_row2_col6" class="data row2 col6">0.5442</td>
+<td id="T_d165d_row2_col7" class="data row2 col7">0.5588</td>
+<td id="T_d165d_row2_col8" class="data row2 col8">0.0800</td>
+</tr>
+<tr class="even">
+<td id="T_d165d_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">lda</td>
+<td id="T_d165d_row3_col0" class="data row3 col0">Linear Discriminant Analysis</td>
+<td id="T_d165d_row3_col1" class="data row3 col1">0.8131</td>
+<td id="T_d165d_row3_col2" class="data row3 col2">0.8535</td>
+<td id="T_d165d_row3_col3" class="data row3 col3">0.6476</td>
+<td id="T_d165d_row3_col4" class="data row3 col4">0.7370</td>
+<td id="T_d165d_row3_col5" class="data row3 col5">0.6703</td>
+<td id="T_d165d_row3_col6" class="data row3 col6">0.5442</td>
+<td id="T_d165d_row3_col7" class="data row3 col7">0.5588</td>
+<td id="T_d165d_row3_col8" class="data row3 col8">0.0660</td>
+</tr>
+<tr class="odd">
+<td id="T_d165d_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">gbc</td>
+<td id="T_d165d_row4_col0" class="data row4 col0">Gradient Boosting Classifier</td>
+<td id="T_d165d_row4_col1" class="data row4 col1">0.8129</td>
+<td id="T_d165d_row4_col2" class="data row4 col2">0.8676</td>
+<td id="T_d165d_row4_col3" class="data row4 col3">0.6762</td>
+<td id="T_d165d_row4_col4" class="data row4 col4">0.7685</td>
+<td id="T_d165d_row4_col5" class="data row4 col5">0.6904</td>
+<td id="T_d165d_row4_col6" class="data row4 col6">0.5589</td>
+<td id="T_d165d_row4_col7" class="data row4 col7">0.5808</td>
+<td id="T_d165d_row4_col8" class="data row4 col8">0.1400</td>
+</tr>
+<tr class="even">
+<td id="T_d165d_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">xgboost</td>
+<td id="T_d165d_row5_col0" class="data row5 col0">Extreme Gradient Boosting</td>
+<td id="T_d165d_row5_col1" class="data row5 col1">0.7938</td>
+<td id="T_d165d_row5_col2" class="data row5 col2">0.8795</td>
+<td id="T_d165d_row5_col3" class="data row5 col3">0.6786</td>
+<td id="T_d165d_row5_col4" class="data row5 col4">0.7238</td>
+<td id="T_d165d_row5_col5" class="data row5 col5">0.6787</td>
+<td id="T_d165d_row5_col6" class="data row5 col6">0.5290</td>
+<td id="T_d165d_row5_col7" class="data row5 col7">0.5449</td>
+<td id="T_d165d_row5_col8" class="data row5 col8">0.1310</td>
+</tr>
+<tr class="odd">
+<td id="T_d165d_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">lightgbm</td>
+<td id="T_d165d_row6_col0" class="data row6 col0">Light Gradient Boosting Machine</td>
+<td id="T_d165d_row6_col1" class="data row6 col1">0.7938</td>
+<td id="T_d165d_row6_col2" class="data row6 col2">0.8655</td>
+<td id="T_d165d_row6_col3" class="data row6 col3">0.6643</td>
+<td id="T_d165d_row6_col4" class="data row6 col4">0.7437</td>
+<td id="T_d165d_row6_col5" class="data row6 col5">0.6740</td>
+<td id="T_d165d_row6_col6" class="data row6 col6">0.5257</td>
+<td id="T_d165d_row6_col7" class="data row6 col7">0.5457</td>
+<td id="T_d165d_row6_col8" class="data row6 col8">0.2710</td>
+</tr>
+<tr class="even">
+<td id="T_d165d_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">et</td>
+<td id="T_d165d_row7_col0" class="data row7 col0">Extra Trees Classifier</td>
+<td id="T_d165d_row7_col1" class="data row7 col1">0.7843</td>
+<td id="T_d165d_row7_col2" class="data row7 col2">0.8326</td>
+<td id="T_d165d_row7_col3" class="data row7 col3">0.4976</td>
+<td id="T_d165d_row7_col4" class="data row7 col4">0.7825</td>
+<td id="T_d165d_row7_col5" class="data row7 col5">0.5760</td>
+<td id="T_d165d_row7_col6" class="data row7 col6">0.4448</td>
+<td id="T_d165d_row7_col7" class="data row7 col7">0.4792</td>
+<td id="T_d165d_row7_col8" class="data row7 col8">0.3380</td>
+</tr>
+<tr class="odd">
+<td id="T_d165d_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">ada</td>
+<td id="T_d165d_row8_col0" class="data row8 col0">Ada Boost Classifier</td>
+<td id="T_d165d_row8_col1" class="data row8 col1">0.7700</td>
+<td id="T_d165d_row8_col2" class="data row8 col2">0.8135</td>
+<td id="T_d165d_row8_col3" class="data row8 col3">0.5500</td>
+<td id="T_d165d_row8_col4" class="data row8 col4">0.7420</td>
+<td id="T_d165d_row8_col5" class="data row8 col5">0.5950</td>
+<td id="T_d165d_row8_col6" class="data row8 col6">0.4430</td>
+<td id="T_d165d_row8_col7" class="data row8 col7">0.4740</td>
+<td id="T_d165d_row8_col8" class="data row8 col8">0.1260</td>
+</tr>
+<tr class="even">
+<td id="T_d165d_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">dt</td>
+<td id="T_d165d_row9_col0" class="data row9 col0">Decision Tree Classifier</td>
+<td id="T_d165d_row9_col1" class="data row9 col1">0.7650</td>
+<td id="T_d165d_row9_col2" class="data row9 col2">0.7179</td>
+<td id="T_d165d_row9_col3" class="data row9 col3">0.6000</td>
+<td id="T_d165d_row9_col4" class="data row9 col4">0.7023</td>
+<td id="T_d165d_row9_col5" class="data row9 col5">0.5992</td>
+<td id="T_d165d_row9_col6" class="data row9 col6">0.4397</td>
+<td id="T_d165d_row9_col7" class="data row9 col7">0.4670</td>
+<td id="T_d165d_row9_col8" class="data row9 col8">0.1620</td>
+</tr>
+<tr class="odd">
+<td id="T_d165d_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">nb</td>
+<td id="T_d165d_row10_col0" class="data row10 col0">Naive Bayes</td>
+<td id="T_d165d_row10_col1" class="data row10 col1">0.7462</td>
+<td id="T_d165d_row10_col2" class="data row10 col2">0.7793</td>
+<td id="T_d165d_row10_col3" class="data row10 col3">0.4881</td>
+<td id="T_d165d_row10_col4" class="data row10 col4">0.6703</td>
+<td id="T_d165d_row10_col5" class="data row10 col5">0.5337</td>
+<td id="T_d165d_row10_col6" class="data row10 col6">0.3714</td>
+<td id="T_d165d_row10_col7" class="data row10 col7">0.3930</td>
+<td id="T_d165d_row10_col8" class="data row10 col8">0.1850</td>
+</tr>
+<tr class="even">
+<td id="T_d165d_level0_row11" class="row_heading level0 row11" data-quarto-table-cell-role="th">qda</td>
+<td id="T_d165d_row11_col0" class="data row11 col0">Quadratic Discriminant Analysis</td>
+<td id="T_d165d_row11_col1" class="data row11 col1">0.7367</td>
+<td id="T_d165d_row11_col2" class="data row11 col2">0.7423</td>
+<td id="T_d165d_row11_col3" class="data row11 col3">0.4429</td>
+<td id="T_d165d_row11_col4" class="data row11 col4">0.6314</td>
+<td id="T_d165d_row11_col5" class="data row11 col5">0.5058</td>
+<td id="T_d165d_row11_col6" class="data row11 col6">0.3382</td>
+<td id="T_d165d_row11_col7" class="data row11 col7">0.3544</td>
+<td id="T_d165d_row11_col8" class="data row11 col8">0.0410</td>
+</tr>
+<tr class="odd">
+<td id="T_d165d_level0_row12" class="row_heading level0 row12" data-quarto-table-cell-role="th">svm</td>
+<td id="T_d165d_row12_col0" class="data row12 col0">SVM - Linear Kernel</td>
+<td id="T_d165d_row12_col1" class="data row12 col1">0.7314</td>
+<td id="T_d165d_row12_col2" class="data row12 col2">0.0000</td>
+<td id="T_d165d_row12_col3" class="data row12 col3">0.6214</td>
+<td id="T_d165d_row12_col4" class="data row12 col4">0.5955</td>
+<td id="T_d165d_row12_col5" class="data row12 col5">0.5924</td>
+<td id="T_d165d_row12_col6" class="data row12 col6">0.3960</td>
+<td id="T_d165d_row12_col7" class="data row12 col7">0.4105</td>
+<td id="T_d165d_row12_col8" class="data row12 col8">0.1030</td>
+</tr>
+<tr class="even">
+<td id="T_d165d_level0_row13" class="row_heading level0 row13" data-quarto-table-cell-role="th">knn</td>
+<td id="T_d165d_row13_col0" class="data row13 col0">K Neighbors Classifier</td>
+<td id="T_d165d_row13_col1" class="data row13 col1">0.7124</td>
+<td id="T_d165d_row13_col2" class="data row13 col2">0.7169</td>
+<td id="T_d165d_row13_col3" class="data row13 col3">0.2524</td>
+<td id="T_d165d_row13_col4" class="data row13 col4">0.5750</td>
+<td id="T_d165d_row13_col5" class="data row13 col5">0.3261</td>
+<td id="T_d165d_row13_col6" class="data row13 col6">0.2046</td>
+<td id="T_d165d_row13_col7" class="data row13 col7">0.2372</td>
+<td id="T_d165d_row13_col8" class="data row13 col8">0.1880</td>
+</tr>
+<tr class="odd">
+<td id="T_d165d_level0_row14" class="row_heading level0 row14" data-quarto-table-cell-role="th">dummy</td>
+<td id="T_d165d_row14_col0" class="data row14 col0">Dummy Classifier</td>
+<td id="T_d165d_row14_col1" class="data row14 col1">0.6795</td>
+<td id="T_d165d_row14_col2" class="data row14 col2">0.5000</td>
+<td id="T_d165d_row14_col3" class="data row14 col3">0.0000</td>
+<td id="T_d165d_row14_col4" class="data row14 col4">0.0000</td>
+<td id="T_d165d_row14_col5" class="data row14 col5">0.0000</td>
+<td id="T_d165d_row14_col6" class="data row14 col6">0.0000</td>
+<td id="T_d165d_row14_col7" class="data row14 col7">0.0000</td>
+<td id="T_d165d_row14_col8" class="data row14 col8">0.0360</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"version_major":2,"version_minor":0,"model_id":"a983c16608b64553899a9b07fad63b46","quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+
+</div>
+<div class="cell-output cell-output-display" data-execution_count="26">
+<style>#sk-container-id-3 {color: black;background-color: white;}#sk-container-id-3 pre{padding: 0;}#sk-container-id-3 div.sk-toggleable {background-color: white;}#sk-container-id-3 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-3 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-3 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-3 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-3 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-3 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-3 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-3 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-3 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-3 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-3 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-3 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-3 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-3 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-3 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-3 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-3 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-3 div.sk-item {position: relative;z-index: 1;}#sk-container-id-3 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-3 div.sk-item::before, #sk-container-id-3 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-3 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-3 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-3 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-3 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-3 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-3 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-3 div.sk-label-container {text-align: center;}#sk-container-id-3 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-3 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-3" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
+                       criterion='gini', max_depth=None, max_features='sqrt',
+                       max_leaf_nodes=None, max_samples=None,
+                       min_impurity_decrease=0.0, min_samples_leaf=1,
+                       min_samples_split=2, min_weight_fraction_leaf=0.0,
+                       n_estimators=100, n_jobs=-1, oob_score=False,
+                       random_state=8111, verbose=0, warm_start=False)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden=""><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox" checked=""><label for="sk-estimator-id-3" class="sk-toggleable__label sk-toggleable__label-arrow">RandomForestClassifier</label><div class="sk-toggleable__content"><pre>RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
+                       criterion='gini', max_depth=None, max_features='sqrt',
+                       max_leaf_nodes=None, max_samples=None,
+                       min_impurity_decrease=0.0, min_samples_leaf=1,
+                       min_samples_split=2, min_weight_fraction_leaf=0.0,
+                       n_estimators=100, n_jobs=-1, oob_score=False,
+                       random_state=8111, verbose=0, warm_start=False)</pre></div></div></div></div></div>
+</div>
+</div>
+</section>
+</section>
+<section id="evaluasi" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="evaluasi"><span class="header-section-number">3.5</span> Evaluasi</h2>
+<section id="menyimpan-model-terbaik-menggunakan-pycaret" class="level3" data-number="3.5.1">
+<h3 data-number="3.5.1" class="anchored" data-anchor-id="menyimpan-model-terbaik-menggunakan-pycaret"><span class="header-section-number">3.5.1</span> Menyimpan Model terbaik Menggunakan Pycaret</h3>
+<p>Bisa dilihat diatas bahwa model terbaik salah satunya adalah Random Forest Classifier. maka kita simpan model Random Forest Classifier untuk prediksi nantinya.</p>
+<section id="random-forest-classifier" class="level4" data-number="3.5.1.1">
+<h4 data-number="3.5.1.1" class="anchored" data-anchor-id="random-forest-classifier"><span class="header-section-number">3.5.1.1</span> Random Forest Classifier:</h4>
+<p>Random Forest adalah algoritma machine learning yang termasuk dalam kategori ensemble learning. Ensemble learning menggabungkan prediksi dari beberapa model untuk meningkatkan performa dan ketahanan terhadap overfitting. Random Forest dapat digunakan untuk tugas klasifikasi (seperti prediksi kategori) dan regresi (prediksi nilai numerik).</p>
+</section>
+<section id="cara-kerja" class="level4" data-number="3.5.1.2">
+<h4 data-number="3.5.1.2" class="anchored" data-anchor-id="cara-kerja"><span class="header-section-number">3.5.1.2</span> Cara Kerja:</h4>
+<ol type="1">
+<li><strong>Pembuatan Banyak Pohon (Trees):</strong>
+<ul>
+<li>Random Forest terdiri dari sejumlah besar pohon keputusan yang dibuat secara acak. Setiap pohon dalam Random Forest dibuat berdasarkan subset acak dari data pelatihan dan fitur-fiturnya.</li>
+</ul></li>
+<li><strong>Bootstrap Sampling (Bootstrapped Dataset):</strong>
+<ul>
+<li>Pada setiap langkah pembuatan pohon, dilakukan bootstrap sampling, yaitu pengambilan sampel acak dengan penggantian dari dataset pelatihan. Beberapa data dapat muncul lebih dari sekali, dan beberapa mungkin tidak dipilih.</li>
+</ul></li>
+<li><strong>Pemilihan Fitur Secara Acak:</strong>
+<ul>
+<li>Pada setiap langkah pembuatan pohon, juga dilakukan pemilihan acak dari fitur-fitur yang tersedia. Ini membantu dalam menciptakan variasi antar pohon.</li>
+</ul></li>
+<li><strong>Pembuatan Pohon Keputusan:</strong>
+<ul>
+<li>Setiap pohon dibuat menggunakan data sampel dari bootstrap dan fitur yang dipilih secara acak. Pemisahan (split) di setiap node pohon dilakukan berdasarkan kriteria seperti Gini Impurity untuk klasifikasi atau Mean Squared Error untuk regresi.</li>
+</ul></li>
+<li><strong>Voting (Klasifikasi):</strong>
+<ul>
+<li>Untuk tugas klasifikasi, setelah semua pohon selesai membuat prediksi, hasilnya diambil berdasarkan mayoritas voting. Kelas dengan voting terbanyak dianggap sebagai prediksi akhir.</li>
+</ul></li>
+</ol>
+<p>jika (N) adalah jumlah pohon dalam Random Forest, dan (h_i(x)) adalah hasil prediksi dari pohon ke-i, maka hasil akhir (H(x)) dari Random Forest dapat dihitung sebagai berikut:</p>
+<p><strong>Rumus untuk Klasifikasi Random Forest:</strong></p>
+<p>$[ H(x) = (h_1(x), h_2(x), , h_N(x)) $]</p>
+<p>penjelasan:</p>
+<ul>
+<li><span class="math inline">\((H(x)\)</span>) adalah prediksi akhir dari ensemble model.</li>
+<li><span class="math inline">\((h_i(x)\)</span>) adalah prediksi dari model ke-<span class="math inline">\((i\)</span>).</li>
+<li><span class="math inline">\((\text{{mode}}\)</span>) merujuk pada nilai yang paling sering muncul atau kelas yang paling sering diprediksi di antara prediksi model-individu.</li>
+</ul>
+<p>Rumus ini, sesuai dengan prinsip mayoritas voting pada ensambel model seperti Random Forest. Model ensambel, seperti Random Forest, cenderung memberikan performa yang baik dalam berbagai jenis dataset, termasuk dataset kesehatan seperti “Heart failure clinical records”.</p>
+<p>Dalam kasus dataset kesehatan seperti ini, Random Forest bisa menjadi pilihan yang baik karena:</p>
+<ol type="1">
+<li><p>Robust terhadap Overfitting: Random Forest mampu mengatasi masalah overfitting yang mungkin muncul pada pohon keputusan tunggal, karena hasil mayoritas dari banyak pohon keputusan.</p></li>
+<li><p>Tidak Sensitif terhadap Outliers: Random Forest dapat menangani data yang tidak seimbang dan keberadaan outlier dalam dataset.</p></li>
+<li><p>Interpretability: Meskipun Random Forest cenderung tidak seinterpretatif pohon keputusan tunggal, tetapi masih memberikan pemahaman yang baik tentang pentingnya fitur dalam membuat keputusan.</p></li>
+<li><p>Handling Fitur Numerik dan Kategorikal: Random Forest dapat menangani baik fitur numerik maupun kategorikal tanpa memerlukan transformasi khusus.</p></li>
+<li><p>Performa yang Baik secara Umum: Random Forest umumnya memberikan performa yang baik tanpa perlu penyesuaian parameter yang terlalu rumit.</p></li>
+</ol>
+<div class="cell" data-outputid="93d56eb0-2935-46bc-d4cf-dbf8128cbaaa">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>best_model <span class="op">=</span> create_model(<span class="st">'rf'</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Simpan model terbaik ke dalam file pickle</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>model_filename <span class="op">=</span> <span class="st">'best_model.pkl'</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(model_filename, <span class="st">'wb'</span>) <span class="im">as</span> <span class="bu">file</span>:</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    pickle.dump(best_model, <span class="bu">file</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Load model dari file pickle</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(model_filename, <span class="st">'rb'</span>) <span class="im">as</span> <span class="bu">file</span>:</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    loaded_model <span class="op">=</span> pickle.load(<span class="bu">file</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+</div>
+<div class="cell-output cell-output-display">
+
+
+<table id="T_9c1ca" class="dataframe table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_9c1ca_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Accuracy</th>
+<th id="T_9c1ca_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">AUC</th>
+<th id="T_9c1ca_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Recall</th>
+<th id="T_9c1ca_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">Prec.</th>
+<th id="T_9c1ca_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">F1</th>
+<th id="T_9c1ca_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">Kappa</th>
+<th id="T_9c1ca_level0_col6" class="col_heading level0 col6" data-quarto-table-cell-role="th">MCC</th>
+</tr>
+<tr class="odd">
+<th class="index_name level0" data-quarto-table-cell-role="th">Fold</th>
+<th class="blank col0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col1" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col2" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col3" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col4" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col5" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col6" data-quarto-table-cell-role="th">&nbsp;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td id="T_9c1ca_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</td>
+<td id="T_9c1ca_row0_col0" class="data row0 col0">0.7619</td>
+<td id="T_9c1ca_row0_col1" class="data row0 col1">0.7806</td>
+<td id="T_9c1ca_row0_col2" class="data row0 col2">0.5714</td>
+<td id="T_9c1ca_row0_col3" class="data row0 col3">0.6667</td>
+<td id="T_9c1ca_row0_col4" class="data row0 col4">0.6154</td>
+<td id="T_9c1ca_row0_col5" class="data row0 col5">0.4444</td>
+<td id="T_9c1ca_row0_col6" class="data row0 col6">0.4472</td>
+</tr>
+<tr class="even">
+<td id="T_9c1ca_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</td>
+<td id="T_9c1ca_row1_col0" class="data row1 col0">0.8095</td>
+<td id="T_9c1ca_row1_col1" class="data row1 col1">0.9184</td>
+<td id="T_9c1ca_row1_col2" class="data row1 col2">0.4286</td>
+<td id="T_9c1ca_row1_col3" class="data row1 col3">1.0000</td>
+<td id="T_9c1ca_row1_col4" class="data row1 col4">0.6000</td>
+<td id="T_9c1ca_row1_col5" class="data row1 col5">0.5000</td>
+<td id="T_9c1ca_row1_col6" class="data row1 col6">0.5774</td>
+</tr>
+<tr class="odd">
+<td id="T_9c1ca_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</td>
+<td id="T_9c1ca_row2_col0" class="data row2 col0">0.9048</td>
+<td id="T_9c1ca_row2_col1" class="data row2 col1">0.9592</td>
+<td id="T_9c1ca_row2_col2" class="data row2 col2">0.8571</td>
+<td id="T_9c1ca_row2_col3" class="data row2 col3">0.8571</td>
+<td id="T_9c1ca_row2_col4" class="data row2 col4">0.8571</td>
+<td id="T_9c1ca_row2_col5" class="data row2 col5">0.7857</td>
+<td id="T_9c1ca_row2_col6" class="data row2 col6">0.7857</td>
+</tr>
+<tr class="even">
+<td id="T_9c1ca_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</td>
+<td id="T_9c1ca_row3_col0" class="data row3 col0">0.7619</td>
+<td id="T_9c1ca_row3_col1" class="data row3 col1">0.9286</td>
+<td id="T_9c1ca_row3_col2" class="data row3 col2">1.0000</td>
+<td id="T_9c1ca_row3_col3" class="data row3 col3">0.5833</td>
+<td id="T_9c1ca_row3_col4" class="data row3 col4">0.7368</td>
+<td id="T_9c1ca_row3_col5" class="data row3 col5">0.5455</td>
+<td id="T_9c1ca_row3_col6" class="data row3 col6">0.6124</td>
+</tr>
+<tr class="odd">
+<td id="T_9c1ca_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">4</td>
+<td id="T_9c1ca_row4_col0" class="data row4 col0">0.7619</td>
+<td id="T_9c1ca_row4_col1" class="data row4 col1">0.8061</td>
+<td id="T_9c1ca_row4_col2" class="data row4 col2">0.4286</td>
+<td id="T_9c1ca_row4_col3" class="data row4 col3">0.7500</td>
+<td id="T_9c1ca_row4_col4" class="data row4 col4">0.5455</td>
+<td id="T_9c1ca_row4_col5" class="data row4 col5">0.4000</td>
+<td id="T_9c1ca_row4_col6" class="data row4 col6">0.4287</td>
+</tr>
+<tr class="even">
+<td id="T_9c1ca_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">5</td>
+<td id="T_9c1ca_row5_col0" class="data row5 col0">0.9524</td>
+<td id="T_9c1ca_row5_col1" class="data row5 col1">0.9796</td>
+<td id="T_9c1ca_row5_col2" class="data row5 col2">0.8571</td>
+<td id="T_9c1ca_row5_col3" class="data row5 col3">1.0000</td>
+<td id="T_9c1ca_row5_col4" class="data row5 col4">0.9231</td>
+<td id="T_9c1ca_row5_col5" class="data row5 col5">0.8889</td>
+<td id="T_9c1ca_row5_col6" class="data row5 col6">0.8944</td>
+</tr>
+<tr class="odd">
+<td id="T_9c1ca_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">6</td>
+<td id="T_9c1ca_row6_col0" class="data row6 col0">0.8571</td>
+<td id="T_9c1ca_row6_col1" class="data row6 col1">0.9235</td>
+<td id="T_9c1ca_row6_col2" class="data row6 col2">0.7143</td>
+<td id="T_9c1ca_row6_col3" class="data row6 col3">0.8333</td>
+<td id="T_9c1ca_row6_col4" class="data row6 col4">0.7692</td>
+<td id="T_9c1ca_row6_col5" class="data row6 col5">0.6667</td>
+<td id="T_9c1ca_row6_col6" class="data row6 col6">0.6708</td>
+</tr>
+<tr class="even">
+<td id="T_9c1ca_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">7</td>
+<td id="T_9c1ca_row7_col0" class="data row7 col0">0.8571</td>
+<td id="T_9c1ca_row7_col1" class="data row7 col1">0.9222</td>
+<td id="T_9c1ca_row7_col2" class="data row7 col2">0.8333</td>
+<td id="T_9c1ca_row7_col3" class="data row7 col3">0.7143</td>
+<td id="T_9c1ca_row7_col4" class="data row7 col4">0.7692</td>
+<td id="T_9c1ca_row7_col5" class="data row7 col5">0.6667</td>
+<td id="T_9c1ca_row7_col6" class="data row7 col6">0.6708</td>
+</tr>
+<tr class="odd">
+<td id="T_9c1ca_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">8</td>
+<td id="T_9c1ca_row8_col0" class="data row8 col0">0.8571</td>
+<td id="T_9c1ca_row8_col1" class="data row8 col1">0.8667</td>
+<td id="T_9c1ca_row8_col2" class="data row8 col2">0.5000</td>
+<td id="T_9c1ca_row8_col3" class="data row8 col3">1.0000</td>
+<td id="T_9c1ca_row8_col4" class="data row8 col4">0.6667</td>
+<td id="T_9c1ca_row8_col5" class="data row8 col5">0.5882</td>
+<td id="T_9c1ca_row8_col6" class="data row8 col6">0.6455</td>
+</tr>
+<tr class="even">
+<td id="T_9c1ca_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">9</td>
+<td id="T_9c1ca_row9_col0" class="data row9 col0">0.7000</td>
+<td id="T_9c1ca_row9_col1" class="data row9 col1">0.8452</td>
+<td id="T_9c1ca_row9_col2" class="data row9 col2">0.5000</td>
+<td id="T_9c1ca_row9_col3" class="data row9 col3">0.5000</td>
+<td id="T_9c1ca_row9_col4" class="data row9 col4">0.5000</td>
+<td id="T_9c1ca_row9_col5" class="data row9 col5">0.2857</td>
+<td id="T_9c1ca_row9_col6" class="data row9 col6">0.2857</td>
+</tr>
+<tr class="odd">
+<td id="T_9c1ca_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">Mean</td>
+<td id="T_9c1ca_row10_col0" class="data row10 col0">0.8224</td>
+<td id="T_9c1ca_row10_col1" class="data row10 col1">0.8930</td>
+<td id="T_9c1ca_row10_col2" class="data row10 col2">0.6690</td>
+<td id="T_9c1ca_row10_col3" class="data row10 col3">0.7905</td>
+<td id="T_9c1ca_row10_col4" class="data row10 col4">0.6983</td>
+<td id="T_9c1ca_row10_col5" class="data row10 col5">0.5772</td>
+<td id="T_9c1ca_row10_col6" class="data row10 col6">0.6019</td>
+</tr>
+<tr class="even">
+<td id="T_9c1ca_level0_row11" class="row_heading level0 row11" data-quarto-table-cell-role="th">Std</td>
+<td id="T_9c1ca_row11_col0" class="data row11 col0">0.0731</td>
+<td id="T_9c1ca_row11_col1" class="data row11 col1">0.0622</td>
+<td id="T_9c1ca_row11_col2" class="data row11 col2">0.1979</td>
+<td id="T_9c1ca_row11_col3" class="data row11 col3">0.1697</td>
+<td id="T_9c1ca_row11_col4" class="data row11 col4">0.1294</td>
+<td id="T_9c1ca_row11_col5" class="data row11 col5">0.1725</td>
+<td id="T_9c1ca_row11_col6" class="data row11 col6">0.1689</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"version_major":2,"version_minor":0,"model_id":"294a1b2e26c04a7a961f2fec67c6a271","quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+
+</div>
+</div>
+</section>
+</section>
+<section id="prediksi-death_event-menggunakan-random-forest-classifier-rf-dengan-data-baru" class="level3" data-number="3.5.2">
+<h3 data-number="3.5.2" class="anchored" data-anchor-id="prediksi-death_event-menggunakan-random-forest-classifier-rf-dengan-data-baru"><span class="header-section-number">3.5.2</span> Prediksi Death_Event Menggunakan Random Forest Classifier (rf) dengan Data Baru</h3>
+<p><strong>Prediksi Menggunakan Random Forest untuk Klasifikasi:</strong></p>
+<ol type="1">
+<li><strong>Persiapkan Data Baru:</strong>
+<ul>
+<li>Masukkan data baru ke dalam model dengan memberikan nilai untuk setiap fitur yang sesuai.</li>
+</ul></li>
+<li><strong>Lakukan Prediksi pada Setiap Pohon:</strong>
+<ul>
+<li>Setiap pohon dalam Random Forest memberikan prediksi berdasarkan data baru.</li>
+</ul></li>
+<li><strong>Aggregasi Hasil Prediksi:</strong>
+<ul>
+<li>Hasil prediksi dari setiap pohon diambil dan dihitung mayoritas voting.</li>
+</ul></li>
+<li><strong>Tentukan Kelas Akhir:</strong>
+<ul>
+<li>Hasil akhir diambil berdasarkan mayoritas voting sebagai kelas prediksi akhir.</li>
+</ul></li>
+</ol>
+<p>Contoh Kode:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Membaca data baru yang akan diprediksi</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>new_data <span class="op">=</span> pd.DataFrame([[age, anaemia, creatinine_phosphokinase, diabetes, ejection_fraction, high_blood_pressure, platelets, serum_creatinine, serum_sodium, sex, smoking, time]], columns<span class="op">=</span>X.columns)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Memuat model terbaik dari file pickle</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>loaded_model <span class="op">=</span> load_model(<span class="st">'best_model'</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Melakukan prediksi pada data baru</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>predictions <span class="op">=</span> predict_model(loaded_model, data<span class="op">=</span>new_data)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Menampilkan hasil prediksi</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> predictions[<span class="st">'prediction_label'</span>].iloc[<span class="dv">0</span>] <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Hasil Prediksi: Pasien berisiko mengalami DEATH_EVENT"</span>)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Hasil Prediksi: Pasien tidak berisiko mengalami DEATH_EVENT"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Dalam kode ini, <code>prediction_label</code> adalah kolom yang berisi prediksi kelas (0 atau 1) dari model Random Forest untuk tugas klasifikasi. Jika nilai Label adalah 1, itu berarti pasien berisiko mengalami DEATH_EVENT; jika 0, itu berarti pasien tidak berisiko.</p>
+<div class="cell" data-outputid="e7c219ce-f19c-436f-9f9c-d805395a3c30">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Membaca data baru yang akan diprediksi</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>age <span class="op">=</span> <span class="bu">float</span>(<span class="bu">input</span>(<span class="st">"Masukkan nilai Age: "</span>))</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>anaemia <span class="op">=</span> <span class="bu">int</span>(<span class="bu">input</span>(<span class="st">"Masukkan nilai Anaemia (0 untuk Tidak, 1 untuk Ya): "</span>))</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>creatinine_phosphokinase <span class="op">=</span> <span class="bu">float</span>(<span class="bu">input</span>(<span class="st">"Masukkan nilai Creatinine Phosphokinase: "</span>))</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>diabetes <span class="op">=</span> <span class="bu">int</span>(<span class="bu">input</span>(<span class="st">"Masukkan nilai Diabetes (0 untuk Tidak, 1 untuk Ya): "</span>))</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>ejection_fraction <span class="op">=</span> <span class="bu">float</span>(<span class="bu">input</span>(<span class="st">"Masukkan nilai Ejection Fraction: "</span>))</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>high_blood_pressure <span class="op">=</span> <span class="bu">int</span>(<span class="bu">input</span>(<span class="st">"Masukkan nilai High Blood Pressure (0 untuk Tidak, 1 untuk Ya): "</span>))</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>platelets <span class="op">=</span> <span class="bu">float</span>(<span class="bu">input</span>(<span class="st">"Masukkan nilai Platelets: "</span>))</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>serum_creatinine <span class="op">=</span> <span class="bu">float</span>(<span class="bu">input</span>(<span class="st">"Masukkan nilai Serum Creatinine: "</span>))</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>serum_sodium <span class="op">=</span> <span class="bu">float</span>(<span class="bu">input</span>(<span class="st">"Masukkan nilai Serum Sodium: "</span>))</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>sex <span class="op">=</span> <span class="bu">int</span>(<span class="bu">input</span>(<span class="st">"Masukkan nilai Sex (0 untuk Perempuan, 1 untuk Laki-laki): "</span>))</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>smoking <span class="op">=</span> <span class="bu">int</span>(<span class="bu">input</span>(<span class="st">"Masukkan nilai Smoking (0 untuk Tidak, 1 untuk Ya): "</span>))</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> <span class="bu">float</span>(<span class="bu">input</span>(<span class="st">"Masukkan nilai Time: "</span>))</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Membuat data baru untuk prediksi</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>new_data <span class="op">=</span> pd.DataFrame([[age, anaemia, creatinine_phosphokinase, diabetes, ejection_fraction, high_blood_pressure, platelets, serum_creatinine, serum_sodium, sex, smoking, time]], columns<span class="op">=</span>X.columns)</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Memuat model terbaik dari file pickle</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>loaded_model <span class="op">=</span> load_model(<span class="st">'best_model'</span>)</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Melakukan prediksi pada data baru</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>predictions <span class="op">=</span> predict_model(loaded_model, data<span class="op">=</span>new_data)</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Menampilkan hasil prediksi</span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> predictions[<span class="st">'prediction_label'</span>].iloc[<span class="dv">0</span>] <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Hasil Prediksi: Pasien berisiko mengalami DEATH_EVENT"</span>)</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Hasil Prediksi: Pasien tidak berisiko mengalami DEATH_EVENT"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Masukkan nilai Age: 60
+Masukkan nilai Anaemia (0 untuk Tidak, 1 untuk Ya): 0
+Masukkan nilai Creatinine Phosphokinase: 528
+Masukkan nilai Diabetes (0 untuk Tidak, 1 untuk Ya): 0
+Masukkan nilai Ejection Fraction: 20
+Masukkan nilai High Blood Pressure (0 untuk Tidak, 1 untuk Ya): 1
+Masukkan nilai Platelets: 125000
+Masukkan nilai Serum Creatinine: 1.4
+Masukkan nilai Serum Sodium: 13
+Masukkan nilai Sex (0 untuk Perempuan, 1 untuk Laki-laki): 1
+Masukkan nilai Smoking (0 untuk Tidak, 1 untuk Ya): 0
+Masukkan nilai Time: 9
+Transformation Pipeline and Model Successfully Loaded</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Hasil Prediksi: Pasien berisiko mengalami DEATH_EVENT</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="deployment" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="deployment"><span class="header-section-number">3.6</span> Deployment</h2>
+<section id="link-streamlitaplikasi-prediksi-pada-dataset-heart-failure-clinical-records" class="level3" data-number="3.6.1">
+<h3 data-number="3.6.1" class="anchored" data-anchor-id="link-streamlitaplikasi-prediksi-pada-dataset-heart-failure-clinical-records"><span class="header-section-number">3.6.1</span> Link Streamlit/Aplikasi Prediksi pada dataset Heart failure clinical records:</h3>
+<p><a href="https://psd-prediksi-jantung.streamlit.app/">https://psd-prediksi-jantung.streamlit.app</a></p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script type="application/vnd.jupyter.widget-state+json">
+{"a983c16608b64553899a9b07fad63b46":{"model_module":"@jupyter-widgets/controls","model_name":"HBoxModel","model_module_version":"1.5.0","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HBoxModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HBoxView","box_style":"","children":["IPY_MODEL_e7d2045ee1804f649b007a988621f48f","IPY_MODEL_28fd468a8e284609916c9318554165cb","IPY_MODEL_c42ecc1db6b2454392f3128a25e925eb"],"layout":"IPY_MODEL_084e08fbc8cf4d9aa04ad79435c780b7"}},"e7d2045ee1804f649b007a988621f48f":{"model_module":"@jupyter-widgets/controls","model_name":"HTMLModel","model_module_version":"1.5.0","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HTMLView","description":"","description_tooltip":null,"layout":"IPY_MODEL_af32a3e0285d407a81bec44c39448262","placeholder":"​","style":"IPY_MODEL_4e31f64ca71a474fb5190ff6fa1951b8","value":"Processing: 100%"}},"28fd468a8e284609916c9318554165cb":{"model_module":"@jupyter-widgets/controls","model_name":"FloatProgressModel","model_module_version":"1.5.0","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"FloatProgressModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"ProgressView","bar_style":"","description":"","description_tooltip":null,"layout":"IPY_MODEL_90997075a4674243a24a8b92573e68d7","max":65,"min":0,"orientation":"horizontal","style":"IPY_MODEL_84e7a2d8f0ce4303aaa720cc32054a70","value":65}},"c42ecc1db6b2454392f3128a25e925eb":{"model_module":"@jupyter-widgets/controls","model_name":"HTMLModel","model_module_version":"1.5.0","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HTMLView","description":"","description_tooltip":null,"layout":"IPY_MODEL_b903325a9a7a490293190e782edf481e","placeholder":"​","style":"IPY_MODEL_f175ad1aa3344243a0abeb846370e12a","value":" 65/65 [00:31&lt;00:00,  3.42it/s]"}},"084e08fbc8cf4d9aa04ad79435c780b7":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","model_module_version":"1.2.0","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":"hidden","width":null}},"af32a3e0285d407a81bec44c39448262":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","model_module_version":"1.2.0","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"4e31f64ca71a474fb5190ff6fa1951b8":{"model_module":"@jupyter-widgets/controls","model_name":"DescriptionStyleModel","model_module_version":"1.5.0","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"DescriptionStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","description_width":""}},"90997075a4674243a24a8b92573e68d7":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","model_module_version":"1.2.0","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"84e7a2d8f0ce4303aaa720cc32054a70":{"model_module":"@jupyter-widgets/controls","model_name":"ProgressStyleModel","model_module_version":"1.5.0","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"ProgressStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","bar_color":null,"description_width":""}},"b903325a9a7a490293190e782edf481e":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","model_module_version":"1.2.0","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"f175ad1aa3344243a0abeb846370e12a":{"model_module":"@jupyter-widgets/controls","model_name":"DescriptionStyleModel","model_module_version":"1.5.0","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"DescriptionStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","description_width":""}},"294a1b2e26c04a7a961f2fec67c6a271":{"model_module":"@jupyter-widgets/controls","model_name":"HBoxModel","model_module_version":"1.5.0","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HBoxModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HBoxView","box_style":"","children":["IPY_MODEL_67518506e061458c83d4902eb50a7514","IPY_MODEL_173c3080a81f4256a70c40d156519d9b","IPY_MODEL_65fd2c6812a34f578bd1f746e6e012c4"],"layout":"IPY_MODEL_7f18072a89204476b24e1d2a37fcf965"}},"67518506e061458c83d4902eb50a7514":{"model_module":"@jupyter-widgets/controls","model_name":"HTMLModel","model_module_version":"1.5.0","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HTMLView","description":"","description_tooltip":null,"layout":"IPY_MODEL_b3db73cb804d4605b160158792638db4","placeholder":"​","style":"IPY_MODEL_3c94af96e7e84342820cf9c48ed1041a","value":"Processing: 100%"}},"173c3080a81f4256a70c40d156519d9b":{"model_module":"@jupyter-widgets/controls","model_name":"FloatProgressModel","model_module_version":"1.5.0","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"FloatProgressModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"ProgressView","bar_style":"","description":"","description_tooltip":null,"layout":"IPY_MODEL_4310c73d03ef4d5d9b79df4c5563e706","max":4,"min":0,"orientation":"horizontal","style":"IPY_MODEL_2679caf81246459c9148543e20add3a1","value":4}},"65fd2c6812a34f578bd1f746e6e012c4":{"model_module":"@jupyter-widgets/controls","model_name":"HTMLModel","model_module_version":"1.5.0","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HTMLView","description":"","description_tooltip":null,"layout":"IPY_MODEL_956fc67513bd46df9cb57ab0d951f8cb","placeholder":"​","style":"IPY_MODEL_ecfbc278552d4721bf25a133bb9e2dfe","value":" 4/4 [00:13&lt;00:00,  2.98s/it]"}},"7f18072a89204476b24e1d2a37fcf965":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","model_module_version":"1.2.0","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":"hidden","width":null}},"b3db73cb804d4605b160158792638db4":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","model_module_version":"1.2.0","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"3c94af96e7e84342820cf9c48ed1041a":{"model_module":"@jupyter-widgets/controls","model_name":"DescriptionStyleModel","model_module_version":"1.5.0","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"DescriptionStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","description_width":""}},"4310c73d03ef4d5d9b79df4c5563e706":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","model_module_version":"1.2.0","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"2679caf81246459c9148543e20add3a1":{"model_module":"@jupyter-widgets/controls","model_name":"ProgressStyleModel","model_module_version":"1.5.0","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"ProgressStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","bar_color":null,"description_width":""}},"956fc67513bd46df9cb57ab0d951f8cb":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","model_module_version":"1.2.0","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"ecfbc278552d4721bf25a133bb9e2dfe":{"model_module":"@jupyter-widgets/controls","model_name":"DescriptionStyleModel","model_module_version":"1.5.0","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"DescriptionStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","description_width":""}}}
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Prediksi_Audio_Emosi.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Analisis dan Prediksi pada Data Audio Emosi</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>
